@@ -164,6 +164,16 @@ button:disabled{
   margin-top:10px;
 }
 
+/* Leaflet control netjes */
+.leaflet-control-layers{
+  border-radius: 12px !important;
+  overflow:hidden;
+}
+.leaflet-control-layers-expanded{
+  padding: 10px !important;
+}
+
+/* Mobile */
 @media (max-width: 900px){
   .layout{ flex-direction:column; }
   .panel{
