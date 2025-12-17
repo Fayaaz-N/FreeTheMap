@@ -1,5 +1,6 @@
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = merge(common, {
   mode: "development",
@@ -9,11 +10,7 @@ module.exports = merge(common, {
     hot: true,
     liveReload: true,
     open: true,
-
-    // serve static files (index.html, css, img, etc)
     static: [{ directory: __dirname }],
-
-    // ✅ proxy MUST be an ARRAY in your setup
     proxy: [
       {
         context: ["/tsdb"],
@@ -21,8 +18,23 @@ module.exports = merge(common, {
         changeOrigin: true,
         secure: true,
         pathRewrite: { "^/tsdb": "" },
-        logLevel: "debug",
       },
     ],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "css", to: "css" },
+        { from: "img", to: "img" },
+        { from: "js/data.json", to: "js/data.json" },
+        { from: "js/vendor", to: "js/vendor" },
+        { from: "icon.svg", to: "icon.svg" },
+        { from: "favicon.ico", to: "favicon.ico" },
+        { from: "robots.txt", to: "robots.txt" },
+        { from: "icon.png", to: "icon.png" },
+        { from: "404.html", to: "404.html" },
+        { from: "site.webmanifest", to: "site.webmanifest" },
+      ],
+    }),
+  ],
 });
