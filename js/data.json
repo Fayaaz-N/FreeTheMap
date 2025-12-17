@@ -1,5 +1,16 @@
 {
   "dataset": "Netherlands World Cup squads (sample subset for school project)",
+  "theme": {
+    "primary": "#FF7A00",
+    "secondary": "#0B4AA2",
+    "dark": "#0b1020"
+  },
+  "clubLogos": {
+    "Ajax": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20AFC%20Ajax%20(1928-1991,%202025-).png",
+    "PSV": "https://commons.wikimedia.org/wiki/Special:FilePath/PSV%20Eindhoven%20logo.svg",
+    "Feyenoord": "https://commons.wikimedia.org/wiki/Special:FilePath/Feyenoord%20logo%20since%202024.svg",
+    "Liverpool": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Liverpool%20FC%20(2024).png"
+  },
   "tournaments": [
     {
       "year": 2010,
@@ -14,13 +25,89 @@
           "position": "Winger",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Groningen", "country": "Netherlands", "stadium": "Euroborg", "latlng": [53.2179, 6.5670], "from": 2000, "to": 2002 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2002, "to": 2004 },
-            { "club": "Chelsea", "country": "England", "stadium": "Stamford Bridge", "latlng": [51.4817, -0.1910], "from": 2004, "to": 2007 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2007, "to": 2009 },
-            { "club": "Bayern Munich", "country": "Germany", "stadium": "Allianz Arena", "latlng": [48.2188, 11.6247], "from": 2009, "to": 2019 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2019, "to": 2020 },
-            { "club": "Groningen", "country": "Netherlands", "stadium": "Euroborg", "latlng": [53.2179, 6.5670], "from": 2020, "to": 2021 }
+            {
+              "club": "Groningen",
+              "country": "Netherlands",
+              "stadium": "Euroborg",
+              "latlng": [
+                53.2179,
+                6.567
+              ],
+              "from": 2000,
+              "to": 2002,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2002,
+              "to": 2004
+            },
+            {
+              "club": "Chelsea",
+              "country": "England",
+              "stadium": "Stamford Bridge",
+              "latlng": [
+                51.4817,
+                -0.191
+              ],
+              "from": 2004,
+              "to": 2007,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/yvwvtu1448813215.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2007,
+              "to": 2009,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Bayern Munich",
+              "country": "Germany",
+              "stadium": "Allianz Arena",
+              "latlng": [
+                48.2188,
+                11.6247
+              ],
+              "from": 2009,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2019,
+              "to": 2020,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Groningen",
+              "country": "Netherlands",
+              "stadium": "Euroborg",
+              "latlng": [
+                53.2179,
+                6.567
+              ],
+              "from": 2020,
+              "to": 2021,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png"
+            }
           ]
         },
         {
@@ -29,12 +116,78 @@
           "position": "Midfielder",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Ajax", "country": "Netherlands", "stadium": "Johan Cruyff ArenA", "latlng": [52.3143, 4.9416], "from": 2002, "to": 2007 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2007, "to": 2009 },
-            { "club": "Inter Milan", "country": "Italy", "stadium": "San Siro", "latlng": [45.4781, 9.1239], "from": 2009, "to": 2013 },
-            { "club": "Galatasaray", "country": "Turkey", "stadium": "Rams Park (Ali Sami Yen Spor Kompleksi)", "latlng": [41.1032, 28.9919], "from": 2013, "to": 2017 },
-            { "club": "Nice", "country": "France", "stadium": "Allianz Riviera", "latlng": [43.7053, 7.1925], "from": 2017, "to": 2018 },
-            { "club": "Al-Gharafa", "country": "Qatar", "stadium": "Thani bin Jassim Stadium", "latlng": [25.2747, 51.4460], "from": 2018, "to": 2019 }
+            {
+              "club": "Ajax",
+              "country": "Netherlands",
+              "stadium": "Johan Cruyff ArenA",
+              "latlng": [
+                52.3143,
+                4.9416
+              ],
+              "from": 2002,
+              "to": 2007,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2007,
+              "to": 2009,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Inter Milan",
+              "country": "Italy",
+              "stadium": "San Siro",
+              "latlng": [
+                45.4781,
+                9.1239
+              ],
+              "from": 2009,
+              "to": 2013,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/ryhu6d1617113103.png"
+            },
+            {
+              "club": "Galatasaray",
+              "country": "Turkey",
+              "stadium": "Rams Park (Ali Sami Yen Spor Kompleksi)",
+              "latlng": [
+                41.1032,
+                28.9919
+              ],
+              "from": 2013,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/75fphr1537381190.png"
+            },
+            {
+              "club": "Nice",
+              "country": "France",
+              "stadium": "Allianz Riviera",
+              "latlng": [
+                43.7053,
+                7.1925
+              ],
+              "from": 2017,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/msy7ly1621593859.png"
+            },
+            {
+              "club": "Al-Gharafa",
+              "country": "Qatar",
+              "stadium": "Thani bin Jassim Stadium",
+              "latlng": [
+                25.2747,
+                51.446
+              ],
+              "from": 2018,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/yan4hx1617909550.png"
+            }
           ]
         },
         {
@@ -43,11 +196,66 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2001, "to": 2004 },
-            { "club": "Arsenal", "country": "England", "stadium": "Emirates Stadium", "latlng": [51.5549, -0.1084], "from": 2004, "to": 2012 },
-            { "club": "Manchester United", "country": "England", "stadium": "Old Trafford", "latlng": [53.4631, -2.2913], "from": 2012, "to": 2015 },
-            { "club": "Fenerbahçe", "country": "Turkey", "stadium": "Şükrü Saracoğlu Stadium", "latlng": [40.9879, 29.0376], "from": 2015, "to": 2018 },
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2018, "to": 2019 }
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2001,
+              "to": 2004,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            },
+            {
+              "club": "Arsenal",
+              "country": "England",
+              "stadium": "Emirates Stadium",
+              "latlng": [
+                51.5549,
+                -0.1084
+              ],
+              "from": 2004,
+              "to": 2012,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png"
+            },
+            {
+              "club": "Manchester United",
+              "country": "England",
+              "stadium": "Old Trafford",
+              "latlng": [
+                53.4631,
+                -2.2913
+              ],
+              "from": 2012,
+              "to": 2015,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+            },
+            {
+              "club": "Fenerbahçe",
+              "country": "Turkey",
+              "stadium": "Şükrü Saracoğlu Stadium",
+              "latlng": [
+                40.9879,
+                29.0376
+              ],
+              "from": 2015,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/twxxvs1448199691.png"
+            },
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2018,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            }
           ]
         },
         {
@@ -56,11 +264,65 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "FC Utrecht", "country": "Netherlands", "stadium": "Stadion Galgenwaard", "latlng": [52.0705, 5.1439], "from": 1998, "to": 2003 },
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2003, "to": 2006 },
-            { "club": "Liverpool", "country": "England", "stadium": "Anfield", "latlng": [53.4308, -2.9608], "from": 2006, "to": 2012 },
-            { "club": "Fenerbahçe", "country": "Turkey", "stadium": "Şükrü Saracoğlu Stadium", "latlng": [40.9879, 29.0376], "from": 2012, "to": 2015 },
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2015, "to": 2017 }
+            {
+              "club": "FC Utrecht",
+              "country": "Netherlands",
+              "stadium": "Stadion Galgenwaard",
+              "latlng": [
+                52.0705,
+                5.1439
+              ],
+              "from": 1998,
+              "to": 2003
+            },
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2003,
+              "to": 2006,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            },
+            {
+              "club": "Liverpool",
+              "country": "England",
+              "stadium": "Anfield",
+              "latlng": [
+                53.4308,
+                -2.9608
+              ],
+              "from": 2006,
+              "to": 2012,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png"
+            },
+            {
+              "club": "Fenerbahçe",
+              "country": "Turkey",
+              "stadium": "Şükrü Saracoğlu Stadium",
+              "latlng": [
+                40.9879,
+                29.0376
+              ],
+              "from": 2012,
+              "to": 2015,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/twxxvs1448199691.png"
+            },
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2015,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            }
           ]
         },
         {
@@ -69,12 +331,76 @@
           "position": "Midfielder",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Fortuna Sittard", "country": "Netherlands", "stadium": "Fortuna Sittard Stadion", "latlng": [51.0039, 5.8704], "from": 1992, "to": 1999 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 1999, "to": 2005 },
-            { "club": "Barcelona", "country": "Spain", "stadium": "Camp Nou", "latlng": [41.3809, 2.1228], "from": 2005, "to": 2006 },
-            { "club": "Bayern Munich", "country": "Germany", "stadium": "Allianz Arena", "latlng": [48.2188, 11.6247], "from": 2006, "to": 2011 },
-            { "club": "Milan", "country": "Italy", "stadium": "San Siro", "latlng": [45.4781, 9.1239], "from": 2011, "to": 2012 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2012, "to": 2013 }
+            {
+              "club": "Fortuna Sittard",
+              "country": "Netherlands",
+              "stadium": "Fortuna Sittard Stadion",
+              "latlng": [
+                51.0039,
+                5.8704
+              ],
+              "from": 1992,
+              "to": 1999,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/aqr7it1685596947.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 1999,
+              "to": 2005
+            },
+            {
+              "club": "Barcelona",
+              "country": "Spain",
+              "stadium": "Camp Nou",
+              "latlng": [
+                41.3809,
+                2.1228
+              ],
+              "from": 2005,
+              "to": 2006,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png"
+            },
+            {
+              "club": "Bayern Munich",
+              "country": "Germany",
+              "stadium": "Allianz Arena",
+              "latlng": [
+                48.2188,
+                11.6247
+              ],
+              "from": 2006,
+              "to": 2011,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png"
+            },
+            {
+              "club": "Milan",
+              "country": "Italy",
+              "stadium": "San Siro",
+              "latlng": [
+                45.4781,
+                9.1239
+              ],
+              "from": 2011,
+              "to": 2012,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/wvspur1448806617.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2012,
+              "to": 2013
+            }
           ]
         }
       ]
@@ -92,12 +418,77 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2011, "to": 2015 },
-            { "club": "Manchester United", "country": "England", "stadium": "Old Trafford", "latlng": [53.4631, -2.2913], "from": 2015, "to": 2017 },
-            { "club": "Lyon", "country": "France", "stadium": "Groupama Stadium", "latlng": [45.7650, 4.9820], "from": 2017, "to": 2021 },
-            { "club": "Barcelona", "country": "Spain", "stadium": "Camp Nou", "latlng": [41.3809, 2.1228], "from": 2021, "to": 2023 },
-            { "club": "Atlético Madrid", "country": "Spain", "stadium": "Riyadh Air Metropolitano", "latlng": [40.4362, -3.5995], "from": 2023, "to": 2024 },
-            { "club": "Corinthians", "country": "Brazil", "stadium": "Neo Química Arena", "latlng": [-23.5453, -46.4742], "from": 2024, "to": null }
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2011,
+              "to": 2015
+            },
+            {
+              "club": "Manchester United",
+              "country": "England",
+              "stadium": "Old Trafford",
+              "latlng": [
+                53.4631,
+                -2.2913
+              ],
+              "from": 2015,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+            },
+            {
+              "club": "Lyon",
+              "country": "France",
+              "stadium": "Groupama Stadium",
+              "latlng": [
+                45.765,
+                4.982
+              ],
+              "from": 2017,
+              "to": 2021,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/blk9771656932845.png"
+            },
+            {
+              "club": "Barcelona",
+              "country": "Spain",
+              "stadium": "Camp Nou",
+              "latlng": [
+                41.3809,
+                2.1228
+              ],
+              "from": 2021,
+              "to": 2023,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png"
+            },
+            {
+              "club": "Atlético Madrid",
+              "country": "Spain",
+              "stadium": "Riyadh Air Metropolitano",
+              "latlng": [
+                40.4362,
+                -3.5995
+              ],
+              "from": 2023,
+              "to": 2024,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/0ulh3q1719984315.png"
+            },
+            {
+              "club": "Corinthians",
+              "country": "Brazil",
+              "stadium": "Neo Química Arena",
+              "latlng": [
+                -23.5453,
+                -46.4742
+              ],
+              "from": 2024,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vvuvps1473538042.png"
+            }
           ]
         },
         {
@@ -106,13 +497,89 @@
           "position": "Winger",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Groningen", "country": "Netherlands", "stadium": "Euroborg", "latlng": [53.2179, 6.5670], "from": 2000, "to": 2002 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2002, "to": 2004 },
-            { "club": "Chelsea", "country": "England", "stadium": "Stamford Bridge", "latlng": [51.4817, -0.1910], "from": 2004, "to": 2007 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2007, "to": 2009 },
-            { "club": "Bayern Munich", "country": "Germany", "stadium": "Allianz Arena", "latlng": [48.2188, 11.6247], "from": 2009, "to": 2019 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2019, "to": 2020 },
-            { "club": "Groningen", "country": "Netherlands", "stadium": "Euroborg", "latlng": [53.2179, 6.5670], "from": 2020, "to": 2021 }
+            {
+              "club": "Groningen",
+              "country": "Netherlands",
+              "stadium": "Euroborg",
+              "latlng": [
+                53.2179,
+                6.567
+              ],
+              "from": 2000,
+              "to": 2002,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2002,
+              "to": 2004
+            },
+            {
+              "club": "Chelsea",
+              "country": "England",
+              "stadium": "Stamford Bridge",
+              "latlng": [
+                51.4817,
+                -0.191
+              ],
+              "from": 2004,
+              "to": 2007,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/yvwvtu1448813215.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2007,
+              "to": 2009,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Bayern Munich",
+              "country": "Germany",
+              "stadium": "Allianz Arena",
+              "latlng": [
+                48.2188,
+                11.6247
+              ],
+              "from": 2009,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2019,
+              "to": 2020,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Groningen",
+              "country": "Netherlands",
+              "stadium": "Euroborg",
+              "latlng": [
+                53.2179,
+                6.567
+              ],
+              "from": 2020,
+              "to": 2021,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png"
+            }
           ]
         },
         {
@@ -121,12 +588,78 @@
           "position": "Midfielder",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Ajax", "country": "Netherlands", "stadium": "Johan Cruyff ArenA", "latlng": [52.3143, 4.9416], "from": 2002, "to": 2007 },
-            { "club": "Real Madrid", "country": "Spain", "stadium": "Santiago Bernabéu Stadium", "latlng": [40.4531, -3.6883], "from": 2007, "to": 2009 },
-            { "club": "Inter Milan", "country": "Italy", "stadium": "San Siro", "latlng": [45.4781, 9.1239], "from": 2009, "to": 2013 },
-            { "club": "Galatasaray", "country": "Turkey", "stadium": "Rams Park (Ali Sami Yen Spor Kompleksi)", "latlng": [41.1032, 28.9919], "from": 2013, "to": 2017 },
-            { "club": "Nice", "country": "France", "stadium": "Allianz Riviera", "latlng": [43.7053, 7.1925], "from": 2017, "to": 2018 },
-            { "club": "Al-Gharafa", "country": "Qatar", "stadium": "Thani bin Jassim Stadium", "latlng": [25.2747, 51.4460], "from": 2018, "to": 2019 }
+            {
+              "club": "Ajax",
+              "country": "Netherlands",
+              "stadium": "Johan Cruyff ArenA",
+              "latlng": [
+                52.3143,
+                4.9416
+              ],
+              "from": 2002,
+              "to": 2007,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png"
+            },
+            {
+              "club": "Real Madrid",
+              "country": "Spain",
+              "stadium": "Santiago Bernabéu Stadium",
+              "latlng": [
+                40.4531,
+                -3.6883
+              ],
+              "from": 2007,
+              "to": 2009,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+            },
+            {
+              "club": "Inter Milan",
+              "country": "Italy",
+              "stadium": "San Siro",
+              "latlng": [
+                45.4781,
+                9.1239
+              ],
+              "from": 2009,
+              "to": 2013,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/ryhu6d1617113103.png"
+            },
+            {
+              "club": "Galatasaray",
+              "country": "Turkey",
+              "stadium": "Rams Park (Ali Sami Yen Spor Kompleksi)",
+              "latlng": [
+                41.1032,
+                28.9919
+              ],
+              "from": 2013,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/75fphr1537381190.png"
+            },
+            {
+              "club": "Nice",
+              "country": "France",
+              "stadium": "Allianz Riviera",
+              "latlng": [
+                43.7053,
+                7.1925
+              ],
+              "from": 2017,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/msy7ly1621593859.png"
+            },
+            {
+              "club": "Al-Gharafa",
+              "country": "Qatar",
+              "stadium": "Thani bin Jassim Stadium",
+              "latlng": [
+                25.2747,
+                51.446
+              ],
+              "from": 2018,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/yan4hx1617909550.png"
+            }
           ]
         },
         {
@@ -135,11 +668,66 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2001, "to": 2004 },
-            { "club": "Arsenal", "country": "England", "stadium": "Emirates Stadium", "latlng": [51.5549, -0.1084], "from": 2004, "to": 2012 },
-            { "club": "Manchester United", "country": "England", "stadium": "Old Trafford", "latlng": [53.4631, -2.2913], "from": 2012, "to": 2015 },
-            { "club": "Fenerbahçe", "country": "Turkey", "stadium": "Şükrü Saracoğlu Stadium", "latlng": [40.9879, 29.0376], "from": 2015, "to": 2018 },
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2018, "to": 2019 }
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2001,
+              "to": 2004,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            },
+            {
+              "club": "Arsenal",
+              "country": "England",
+              "stadium": "Emirates Stadium",
+              "latlng": [
+                51.5549,
+                -0.1084
+              ],
+              "from": 2004,
+              "to": 2012,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png"
+            },
+            {
+              "club": "Manchester United",
+              "country": "England",
+              "stadium": "Old Trafford",
+              "latlng": [
+                53.4631,
+                -2.2913
+              ],
+              "from": 2012,
+              "to": 2015,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+            },
+            {
+              "club": "Fenerbahçe",
+              "country": "Turkey",
+              "stadium": "Şükrü Saracoğlu Stadium",
+              "latlng": [
+                40.9879,
+                29.0376
+              ],
+              "from": 2015,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/twxxvs1448199691.png"
+            },
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2018,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            }
           ]
         },
         {
@@ -148,13 +736,88 @@
           "position": "Midfielder",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Feyenoord", "country": "Netherlands", "stadium": "Stadion Feijenoord (De Kuip)", "latlng": [51.8939, 4.5231], "from": 2007, "to": 2011 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2011, "to": 2015 },
-            { "club": "Newcastle United", "country": "England", "stadium": "St James' Park", "latlng": [54.9756, -1.6216], "from": 2015, "to": 2016 },
-            { "club": "Liverpool", "country": "England", "stadium": "Anfield", "latlng": [53.4308, -2.9608], "from": 2016, "to": 2021 },
-            { "club": "Paris Saint-Germain", "country": "France", "stadium": "Parc des Princes", "latlng": [48.8414, 2.2530], "from": 2021, "to": 2023 },
-            { "club": "Roma", "country": "Italy", "stadium": "Stadio Olimpico", "latlng": [41.9341, 12.4547], "from": 2022, "to": 2023 },
-            { "club": "Al-Ettifaq", "country": "Saudi Arabia", "stadium": "Prince Mohamed bin Fahd Stadium", "latlng": [26.4209, 50.1046], "from": 2023, "to": null }
+            {
+              "club": "Feyenoord",
+              "country": "Netherlands",
+              "stadium": "Stadion Feijenoord (De Kuip)",
+              "latlng": [
+                51.8939,
+                4.5231
+              ],
+              "from": 2007,
+              "to": 2011,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2011,
+              "to": 2015
+            },
+            {
+              "club": "Newcastle United",
+              "country": "England",
+              "stadium": "St James' Park",
+              "latlng": [
+                54.9756,
+                -1.6216
+              ],
+              "from": 2015,
+              "to": 2016,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/lhwuiz1621593302.png"
+            },
+            {
+              "club": "Liverpool",
+              "country": "England",
+              "stadium": "Anfield",
+              "latlng": [
+                53.4308,
+                -2.9608
+              ],
+              "from": 2016,
+              "to": 2021,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png"
+            },
+            {
+              "club": "Paris Saint-Germain",
+              "country": "France",
+              "stadium": "Parc des Princes",
+              "latlng": [
+                48.8414,
+                2.253
+              ],
+              "from": 2021,
+              "to": 2023
+            },
+            {
+              "club": "Roma",
+              "country": "Italy",
+              "stadium": "Stadio Olimpico",
+              "latlng": [
+                41.9341,
+                12.4547
+              ],
+              "from": 2022,
+              "to": 2023,
+              "clubLogo": "https://www.thesportsdb.com/images/media/team/badge/jwro2s1760820674.png"
+            },
+            {
+              "club": "Al-Ettifaq",
+              "country": "Saudi Arabia",
+              "stadium": "Prince Mohamed bin Fahd Stadium",
+              "latlng": [
+                26.4209,
+                50.1046
+              ],
+              "from": 2023,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/m272h51694761970.png"
+            }
           ]
         }
       ]
@@ -172,10 +835,54 @@
           "position": "Defender",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Groningen", "country": "Netherlands", "stadium": "Euroborg", "latlng": [53.2179, 6.5670], "from": 2011, "to": 2013 },
-            { "club": "Celtic", "country": "Scotland", "stadium": "Celtic Park", "latlng": [55.8497, -4.2056], "from": 2013, "to": 2015 },
-            { "club": "Southampton", "country": "England", "stadium": "St Mary's Stadium", "latlng": [50.9058, -1.3911], "from": 2015, "to": 2018 },
-            { "club": "Liverpool", "country": "England", "stadium": "Anfield", "latlng": [53.4308, -2.9608], "from": 2018, "to": null }
+            {
+              "club": "Groningen",
+              "country": "Netherlands",
+              "stadium": "Euroborg",
+              "latlng": [
+                53.2179,
+                6.567
+              ],
+              "from": 2011,
+              "to": 2013,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png"
+            },
+            {
+              "club": "Celtic",
+              "country": "Scotland",
+              "stadium": "Celtic Park",
+              "latlng": [
+                55.8497,
+                -4.2056
+              ],
+              "from": 2013,
+              "to": 2015,
+              "clubLogo": "https://www.thesportsdb.com/images/media/team/badge/3uv1641758780002.png"
+            },
+            {
+              "club": "Southampton",
+              "country": "England",
+              "stadium": "St Mary's Stadium",
+              "latlng": [
+                50.9058,
+                -1.3911
+              ],
+              "from": 2015,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/ggqtd01621593274.png"
+            },
+            {
+              "club": "Liverpool",
+              "country": "England",
+              "stadium": "Anfield",
+              "latlng": [
+                53.4308,
+                -2.9608
+              ],
+              "from": 2018,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png"
+            }
           ]
         },
         {
@@ -184,10 +891,54 @@
           "position": "Midfielder",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Willem II", "country": "Netherlands", "stadium": "Koning Willem II Stadion", "latlng": [51.5563, 5.0555], "from": 2015, "to": 2015 },
-            { "club": "Jong Ajax", "country": "Netherlands", "stadium": "Sportpark De Toekomst", "latlng": [52.3136, 4.9289], "from": 2015, "to": 2017 },
-            { "club": "Ajax", "country": "Netherlands", "stadium": "Johan Cruyff ArenA", "latlng": [52.3143, 4.9416], "from": 2016, "to": 2019 },
-            { "club": "Barcelona", "country": "Spain", "stadium": "Camp Nou", "latlng": [41.3809, 2.1228], "from": 2019, "to": null }
+            {
+              "club": "Willem II",
+              "country": "Netherlands",
+              "stadium": "Koning Willem II Stadion",
+              "latlng": [
+                51.5563,
+                5.0555
+              ],
+              "from": 2015,
+              "to": 2015,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/ushlnc1666107465.png"
+            },
+            {
+              "club": "Jong Ajax",
+              "country": "Netherlands",
+              "stadium": "Sportpark De Toekomst",
+              "latlng": [
+                52.3136,
+                4.9289
+              ],
+              "from": 2015,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vkxft71755495327.png"
+            },
+            {
+              "club": "Ajax",
+              "country": "Netherlands",
+              "stadium": "Johan Cruyff ArenA",
+              "latlng": [
+                52.3143,
+                4.9416
+              ],
+              "from": 2016,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png"
+            },
+            {
+              "club": "Barcelona",
+              "country": "Spain",
+              "stadium": "Camp Nou",
+              "latlng": [
+                41.3809,
+                2.1228
+              ],
+              "from": 2019,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png"
+            }
           ]
         },
         {
@@ -196,9 +947,41 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Jong PSV", "country": "Netherlands", "stadium": "De Herdgang (PSV Campus)", "latlng": [51.46083, 5.43889], "from": 2016, "to": 2019 },
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2018, "to": 2023 },
-            { "club": "Liverpool", "country": "England", "stadium": "Anfield", "latlng": [53.4308, -2.9608], "from": 2023, "to": null }
+            {
+              "club": "Jong PSV",
+              "country": "Netherlands",
+              "stadium": "De Herdgang (PSV Campus)",
+              "latlng": [
+                51.46083,
+                5.43889
+              ],
+              "from": 2016,
+              "to": 2019,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/awhmfi1579211462.png"
+            },
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2018,
+              "to": 2023
+            },
+            {
+              "club": "Liverpool",
+              "country": "England",
+              "stadium": "Anfield",
+              "latlng": [
+                53.4308,
+                -2.9608
+              ],
+              "from": 2023,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png"
+            }
           ]
         },
         {
@@ -207,12 +990,77 @@
           "position": "Forward",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "PSV", "country": "Netherlands", "stadium": "Philips Stadion", "latlng": [51.4416, 5.4678], "from": 2011, "to": 2015 },
-            { "club": "Manchester United", "country": "England", "stadium": "Old Trafford", "latlng": [53.4631, -2.2913], "from": 2015, "to": 2017 },
-            { "club": "Lyon", "country": "France", "stadium": "Groupama Stadium", "latlng": [45.7650, 4.9820], "from": 2017, "to": 2021 },
-            { "club": "Barcelona", "country": "Spain", "stadium": "Camp Nou", "latlng": [41.3809, 2.1228], "from": 2021, "to": 2023 },
-            { "club": "Atlético Madrid", "country": "Spain", "stadium": "Riyadh Air Metropolitano", "latlng": [40.4362, -3.5995], "from": 2023, "to": 2024 },
-            { "club": "Corinthians", "country": "Brazil", "stadium": "Neo Química Arena", "latlng": [-23.5453, -46.4742], "from": 2024, "to": null }
+            {
+              "club": "PSV",
+              "country": "Netherlands",
+              "stadium": "Philips Stadion",
+              "latlng": [
+                51.4416,
+                5.4678
+              ],
+              "from": 2011,
+              "to": 2015
+            },
+            {
+              "club": "Manchester United",
+              "country": "England",
+              "stadium": "Old Trafford",
+              "latlng": [
+                53.4631,
+                -2.2913
+              ],
+              "from": 2015,
+              "to": 2017,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+            },
+            {
+              "club": "Lyon",
+              "country": "France",
+              "stadium": "Groupama Stadium",
+              "latlng": [
+                45.765,
+                4.982
+              ],
+              "from": 2017,
+              "to": 2021,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/blk9771656932845.png"
+            },
+            {
+              "club": "Barcelona",
+              "country": "Spain",
+              "stadium": "Camp Nou",
+              "latlng": [
+                41.3809,
+                2.1228
+              ],
+              "from": 2021,
+              "to": 2023,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png"
+            },
+            {
+              "club": "Atlético Madrid",
+              "country": "Spain",
+              "stadium": "Riyadh Air Metropolitano",
+              "latlng": [
+                40.4362,
+                -3.5995
+              ],
+              "from": 2023,
+              "to": 2024,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/0ulh3q1719984315.png"
+            },
+            {
+              "club": "Corinthians",
+              "country": "Brazil",
+              "stadium": "Neo Química Arena",
+              "latlng": [
+                -23.5453,
+                -46.4742
+              ],
+              "from": 2024,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/vvuvps1473538042.png"
+            }
           ]
         },
         {
@@ -221,11 +1069,66 @@
           "position": "Defender",
           "birthCountry": "Netherlands",
           "clubs": [
-            { "club": "Ajax", "country": "Netherlands", "stadium": "Johan Cruyff ArenA", "latlng": [52.3143, 4.9416], "from": 2008, "to": 2014 },
-            { "club": "Manchester United", "country": "England", "stadium": "Old Trafford", "latlng": [53.4631, -2.2913], "from": 2014, "to": 2018 },
-            { "club": "Ajax", "country": "Netherlands", "stadium": "Johan Cruyff ArenA", "latlng": [52.3143, 4.9416], "from": 2018, "to": 2023 },
-            { "club": "Bayern Munich", "country": "Germany", "stadium": "Allianz Arena", "latlng": [48.2188, 11.6247], "from": 2023, "to": 2023 },
-            { "club": "Girona", "country": "Spain", "stadium": "Estadi Montilivi", "latlng": [41.9614, 2.8289], "from": 2023, "to": null }
+            {
+              "club": "Ajax",
+              "country": "Netherlands",
+              "stadium": "Johan Cruyff ArenA",
+              "latlng": [
+                52.3143,
+                4.9416
+              ],
+              "from": 2008,
+              "to": 2014,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png"
+            },
+            {
+              "club": "Manchester United",
+              "country": "England",
+              "stadium": "Old Trafford",
+              "latlng": [
+                53.4631,
+                -2.2913
+              ],
+              "from": 2014,
+              "to": 2018,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+            },
+            {
+              "club": "Ajax",
+              "country": "Netherlands",
+              "stadium": "Johan Cruyff ArenA",
+              "latlng": [
+                52.3143,
+                4.9416
+              ],
+              "from": 2018,
+              "to": 2023,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png"
+            },
+            {
+              "club": "Bayern Munich",
+              "country": "Germany",
+              "stadium": "Allianz Arena",
+              "latlng": [
+                48.2188,
+                11.6247
+              ],
+              "from": 2023,
+              "to": 2023,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png"
+            },
+            {
+              "club": "Girona",
+              "country": "Spain",
+              "stadium": "Estadi Montilivi",
+              "latlng": [
+                41.9614,
+                2.8289
+              ],
+              "from": 2023,
+              "to": null,
+              "clubLogo": "https://r2.thesportsdb.com/images/media/team/badge/kfu7zu1659897499.png"
+            }
           ]
         }
       ]

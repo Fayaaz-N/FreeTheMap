@@ -1,13 +1,18 @@
 :root{
-  --bg:#0b1020;
-  --card:#121a33;
-  --card2:#0f1730;
-  --text:#e9ecff;
-  --muted:rgba(233,236,255,.72);
+  --bg:#071224;              /* donkerblauw */
+  --card:#0B1B34;
+  --card2:#09162C;
+  --text:#F3F6FF;
+  --muted:rgba(243,246,255,.72);
   --line:rgba(255,255,255,.10);
-  --accent:#6ea8ff;
-  --accent2:#ff6f91;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
+
+  --orange:#FF6A00;          /* Oranje */
+  --orange2:#FF8A2A;
+  --blue:#0B2A5B;            /* NL donkerblauw */
+  --accent: var(--orange);
+  --accent2: var(--orange2);
+
+  --shadow: 0 12px 34px rgba(0,0,0,.40);
   --r:18px;
 }
 
@@ -15,12 +20,16 @@
 html,body{ height:100%; }
 body{
   margin:0;
-  background:
-    radial-gradient(1100px 600px at 15% 10%, rgba(110,168,255,.18), transparent 60%),
-    radial-gradient(900px 520px at 85% 20%, rgba(255,111,145,.14), transparent 55%),
-    var(--bg);
   color:var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+  /* Oranje / NL vibe background */
+  background:
+    radial-gradient(900px 520px at 18% 12%, rgba(255,106,0,.22), transparent 60%),
+    radial-gradient(900px 520px at 86% 20%, rgba(11,42,91,.22), transparent 55%),
+    radial-gradient(1200px 700px at 50% 110%, rgba(255,138,42,.10), transparent 60%),
+    linear-gradient(180deg, rgba(255,106,0,.06), transparent 35%),
+    var(--bg);
 }
 
 .app{
@@ -29,13 +38,16 @@ body{
   padding:22px;
 }
 
+/* ===== TOPBAR ===== */
 .topbar{
   display:flex;
   gap:18px;
   align-items:flex-start;
   justify-content:space-between;
   padding:18px;
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
   border:1px solid var(--line);
   border-radius: var(--r);
   box-shadow: var(--shadow);
@@ -50,13 +62,24 @@ body{
 
 .logo{
   width:44px;height:44px;border-radius:14px;
+
+  /* Oranje badge */
   background:
-    radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.9), transparent 60%),
-    linear-gradient(135deg, rgba(110,168,255,.95), rgba(255,111,145,.85));
-  box-shadow: 0 12px 30px rgba(110,168,255,.18);
+    radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.95), transparent 60%),
+    linear-gradient(135deg, rgba(255,106,0,.98), rgba(11,42,91,.88));
+  box-shadow:
+    0 14px 34px rgba(255,106,0,.18),
+    0 10px 26px rgba(0,0,0,.30);
+  border:1px solid rgba(255,255,255,.10);
 }
 
-.kicker{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.kicker{
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(243,246,255,.70);
+}
+
 h1{ margin:2px 0 0; font-size:18px; }
 
 .timeline{
@@ -78,33 +101,35 @@ h1{ margin:2px 0 0; font-size:18px; }
   gap:10px;
   padding:8px 12px;
   border-radius: 999px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.04);
-  font-weight:700;
+
+  border:1px solid rgba(255,106,0,.35);
+  background: rgba(255,106,0,.08);
+  font-weight:800;
 }
 
 .muted{ color:var(--muted); font-size:13px; }
 
 input[type="range"]{
   width:100%;
-  accent-color: var(--accent);
+  accent-color: var(--orange);
 }
 
 .ticks{
   display:flex;
   justify-content:space-between;
   font-size:12px;
-  color:rgba(233,236,255,.55);
+  color:rgba(243,246,255,.55);
   margin-top:6px;
 }
 
 .hint{
   margin-top:10px;
   font-size:12px;
-  color:rgba(233,236,255,.65);
+  color:rgba(243,246,255,.65);
   min-height: 16px;
 }
 
+/* ===== GRID / CARDS ===== */
 .grid{
   display:grid;
   grid-template-columns: 1.05fr .95fr;
@@ -114,7 +139,8 @@ input[type="range"]{
 
 .card{
   border:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
   border-radius: var(--r);
   box-shadow: var(--shadow);
   overflow:hidden;
@@ -123,12 +149,14 @@ input[type="range"]{
 .card__head{
   padding:16px 16px 12px;
   border-bottom:1px solid var(--line);
-  background: rgba(0,0,0,.18);
+  background:
+    linear-gradient(90deg, rgba(255,106,0,.10), rgba(11,42,91,.10));
 }
 
 .card__head h2{ margin:0; font-size:16px; }
-.sub{ margin-top:6px; color:rgba(233,236,255,.72); font-size:13px; }
+.sub{ margin-top:6px; color:rgba(243,246,255,.74); font-size:13px; }
 
+/* ===== PLAYERS LIST ===== */
 .players{
   padding:14px;
   display:flex;
@@ -143,21 +171,27 @@ input[type="range"]{
   gap:10px;
   padding:12px 12px;
   border-radius: 14px;
+
   border:1px solid rgba(255,255,255,.10);
   background: rgba(0,0,0,.16);
   cursor:pointer;
   transition: transform .08s ease, border-color .12s ease, background .12s ease;
 }
 
-.player:hover{ transform: translateY(-1px); border-color: rgba(110,168,255,.35); }
+.player:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,106,0,.40);
+  background: rgba(255,106,0,.08);
+}
+
 .player.is-active{
-  border-color: rgba(110,168,255,.65);
-  background: rgba(110,168,255,.10);
+  border-color: rgba(255,106,0,.70);
+  background: rgba(255,106,0,.14);
 }
 
 .player__left{ display:flex; flex-direction:column; gap:2px; }
-.player__name{ font-weight:700;color:#fff }
-.player__meta{ font-size:12px; color:rgba(233,236,255,.65); }
+.player__name{ font-weight:800; color:#fff; }
+.player__meta{ font-size:12px; color:rgba(243,246,255,.65); }
 
 .badge{
   font-size:12px;
@@ -165,10 +199,11 @@ input[type="range"]{
   border-radius: 999px;
   border:1px solid rgba(255,255,255,.12);
   background: rgba(255,255,255,.04);
-  color:rgba(233,236,255,.82);
+  color:rgba(243,246,255,.82);
   white-space:nowrap;
 }
 
+/* ===== DETAIL ===== */
 .detail{
   padding:14px 16px 18px;
 }
@@ -184,10 +219,11 @@ input[type="range"]{
 .tag{
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.16);
+
+  border:1px solid rgba(255,106,0,.28);
+  background: rgba(255,106,0,.08);
   font-size:12px;
-  color:rgba(233,236,255,.80);
+  color:rgba(243,246,255,.86);
 }
 
 .clubs{
@@ -213,8 +249,8 @@ input[type="range"]{
   margin-bottom:3px;
 }
 
-.club__name{ font-weight:700; }
-.club__meta{ font-size:12px; color:rgba(233,236,255,.65); }
+.club__name{ font-weight:800; }
+.club__meta{ font-size:12px; color:rgba(243,246,255,.66); }
 
 .empty{
   display:flex;
@@ -222,42 +258,39 @@ input[type="range"]{
   align-items:center;
   padding:14px;
   border-radius:16px;
-  border:1px dashed rgba(255,255,255,.18);
-  background: rgba(0,0,0,.10);
+  border:1px dashed rgba(255,106,0,.30);
+  background: rgba(255,106,0,.06);
 }
 
 .empty__dot{
   width:12px;height:12px;border-radius:999px;
-  background: var(--accent2);
-  box-shadow: 0 0 0 6px rgba(255,111,145,.16);
+  background: var(--orange);
+  box-shadow: 0 0 0 6px rgba(255,106,0,.18);
 }
 
-.empty__title{ font-weight:800; }
-.empty__text{ color:rgba(233,236,255,.70); font-size:13px; margin-top:2px; }
+.empty__title{ font-weight:900; }
+.empty__text{ color:rgba(243,246,255,.72); font-size:13px; margin-top:2px; }
 
 .footer{
   margin-top:14px;
   padding:10px 2px;
 }
 
-@media (max-width: 920px){
-  .topbar{ flex-direction:column; }
-  .grid{ grid-template-columns: 1fr; }
-  .brand{ min-width: auto; }
-}
-
-
+/* ===== MAP ===== */
 .map{
   height: 420px;
   width: 100%;
   background: rgba(0,0,0,.18);
 }
+
 @media (max-width: 920px){
+  .topbar{ flex-direction:column; }
+  .grid{ grid-template-columns: 1fr; }
+  .brand{ min-width: auto; }
   .map{ height: 360px; }
 }
 
-
-
+/* dashboard layout */
 .grid--dashboard{
   display: grid;
   gap: 16px;
@@ -269,13 +302,11 @@ input[type="range"]{
     "speler";
 }
 
-/* Koppel jouw elementen aan de areas */
 .card--map{ grid-area: map; }
 .topbar{ grid-area: timeline; }
 .card--selectie{ grid-area: selectie; }
 .card--speler{ grid-area: speler; }
 
-/* Desktop: map + timeline full width, daaronder 2 kolommen */
 @media (min-width: 900px){
   .grid--dashboard{
     grid-template-columns: 1fr 1fr;
@@ -285,17 +316,14 @@ input[type="range"]{
       "selectie speler";
     align-items: stretch;
   }
-
-  .map--big{ height: 520px; } /* tweak naar smaak */
+  .map--big{ height: 520px; }
 }
 
-/* Mobile map hoogte */
 @media (max-width: 899px){
   .map--big{ height: 420px; }
 }
 
-
-
+/* logo markers */
 .club-logo-marker {
   background: transparent !important;
   border: none !important;

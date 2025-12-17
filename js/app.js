@@ -1,4 +1,144 @@
 (() => {
+  // voorkom dubbele init bij HMR
+  if (window.__ORANJE_APP_RUNNING__) return;
+  window.__ORANJE_APP_RUNNING__ = true;
+
+  // =============================
+  // TheSportsDB (via webpack proxy)
+  // =============================
+  const TSDB_KEY = "123"; // free key
+  const TSDB_BASE = `/tsdb/api/v1/json/${TSDB_KEY}`; // <-- gaat via proxy, dus geen CORS
+  const TSDB_CACHE_KEY = "tsdbTeamBadgeCache_v2";
+
+  // Zet dit bestand in: /img/club-default.png  (anders krijg je 404)
+  const FALLBACK_BADGE = "/img/club-default.png";
+
+  function loadTsdbCache() {
+    try {
+      return JSON.parse(localStorage.getItem(TSDB_CACHE_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  }
+  function saveTsdbCache(cache) {
+    try {
+      localStorage.setItem(TSDB_CACHE_KEY, JSON.stringify(cache));
+    } catch {}
+  }
+
+  // alias map: TSDB team naming is soms anders
+  const TSDB_ALIASES = {
+    Groningen: "FC Groningen",
+    "Inter Milan": "Inter",
+    Milan: "AC Milan",
+    Roma: "AS Roma",
+    Lyon: "Olympique Lyonnais",
+    "Newcastle United": "Newcastle",
+    "Manchester United": "Man United",
+    "Atlético Madrid": "Atletico Madrid",
+    "Paris Saint-Germain": "Paris SG",
+    "Fenerbahçe": "Fenerbahce",
+  };
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  async function fetchTeamFromTSDB(teamName) {
+    const t = encodeURIComponent(teamName);
+    const url = `${TSDB_BASE}/searchteams.php?t=${t}`;
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+
+    // Soms krijg je HTML terug als proxy stuk is; guard:
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.includes("application/json")) return null;
+
+    const json = await res.json();
+    return json?.teams?.[0] || null;
+  }
+
+  function pickBadge(team) {
+    // TSDB velden verschillen soms, dus pak de beste die beschikbaar is
+    return (
+      team?.strTeamBadge ||
+      team?.strBadge ||
+      team?.strTeamLogo ||
+      team?.strLogo ||
+      null
+    );
+  }
+
+  async function resolveBadge(teamName, cache) {
+    if (!teamName) return null;
+
+    // cache hit
+    if (cache[teamName]) return cache[teamName];
+
+    // 1) direct
+    let team = await fetchTeamFromTSDB(teamName);
+    let badge = pickBadge(team);
+
+    // 2) alias
+    if (!badge && TSDB_ALIASES[teamName]) {
+      team = await fetchTeamFromTSDB(TSDB_ALIASES[teamName]);
+      badge = pickBadge(team);
+    }
+
+    // 3) strip accents (Atlético → Atletico)
+    if (!badge) {
+      const simplified = teamName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (simplified !== teamName) {
+        team = await fetchTeamFromTSDB(simplified);
+        badge = pickBadge(team);
+      }
+    }
+
+    if (badge) {
+      cache[teamName] = badge;
+      saveTsdbCache(cache);
+    }
+
+    return badge;
+  }
+
+  async function applyClubLogosFromTSDB(data) {
+    const cache = loadTsdbCache();
+
+    // unieke clubs verzamelen
+    const clubs = new Set();
+    for (const t of data.tournaments || []) {
+      for (const p of t.players || []) {
+        for (const c of p.clubs || []) {
+          if (c?.club) clubs.add(c.club);
+        }
+      }
+    }
+
+    // badges ophalen (rustig aan ivm rate limit)
+    for (const clubName of clubs) {
+      try {
+        await resolveBadge(clubName, cache);
+      } catch (e) {
+        // ignore individuele failures
+      }
+      await sleep(200);
+    }
+
+    // inject in dataset
+    for (const t of data.tournaments || []) {
+      for (const p of t.players || []) {
+        for (const c of p.clubs || []) {
+          if (!c.clubLogo && c.club && cache[c.club]) {
+            c.clubLogo = cache[c.club];
+          }
+        }
+      }
+    }
+
+    console.log("[TSDB] cache size:", Object.keys(cache).length);
+  }
+
+  // ========= DOM =========
   const els = {
     yearSlider: document.getElementById("yearSlider"),
     yearPill: document.getElementById("yearPill"),
@@ -12,8 +152,17 @@
     map: document.getElementById("map"),
   };
 
-  // ====== sanity checks ======
-  const required = ["yearSlider", "yearPill", "metaLine", "tournamentTitle", "players", "playerDetail", "playerSub", "mapSub", "map"];
+  const required = [
+    "yearSlider",
+    "yearPill",
+    "metaLine",
+    "tournamentTitle",
+    "players",
+    "playerDetail",
+    "playerSub",
+    "mapSub",
+    "map",
+  ];
   const missing = required.filter((k) => !els[k]);
   if (missing.length) {
     console.error("Mist DOM elementen:", missing);
@@ -31,27 +180,15 @@
   let selectedPlayerId = null;
 
   // ====== helpers ======
-  const safe = (v, fallback = "—") => (v === undefined || v === null || v === "" ? fallback : v);
+  const safe = (v, fallback = "—") =>
+    v === undefined || v === null || v === "" ? fallback : v;
   const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : null);
 
-  const fmtRange = (from, to) => {
-    const f = safe(from, "?");
-    const t = (to === null || to === undefined) ? "nu" : safe(to, "?");
-    return `${f}–${t}`;
-  };
-
-  function clubsChrono(clubs) {
-    const arr = Array.isArray(clubs) ? [...clubs] : [];
-    arr.sort((a, b) => (num(a?.from) ?? 0) - (num(b?.from) ?? 0));
-    return arr;
-  }
-
-  // Clubs t/m cutoffYear, en cap “to” visueel op cutoff
   function clubsUpToYear(clubs, cutoffYear) {
     const list = Array.isArray(clubs) ? clubs.slice() : [];
     const cutoff = Number(cutoffYear);
 
-    const filtered = list.filter(c => {
+    const filtered = list.filter((c) => {
       const from = Number(c.from);
       if (!Number.isFinite(from)) return false;
       return from <= cutoff;
@@ -59,33 +196,40 @@
 
     filtered.sort((a, b) => (Number(a.from) || 0) - (Number(b.from) || 0));
 
-    return filtered.map(c => {
-      const to = (c.to === null || c.to === undefined) ? null : Number(c.to);
-      const toView = (to === null || !Number.isFinite(to) || to > cutoff) ? cutoff : to;
+    return filtered.map((c) => {
+      const to = c.to === null || c.to === undefined ? null : Number(c.to);
+      const toView =
+        to === null || !Number.isFinite(to) || to > cutoff ? cutoff : to;
       return { ...c, _toView: toView };
     });
   }
 
-  // Pak de club-stint waarin iemand zit IN een specifiek jaar (1 club per speler)
   function clubAtYear(clubs, year) {
     const y = Number(year);
     if (!Array.isArray(clubs) || !Number.isFinite(y)) return null;
 
     const list = clubs
-      .map(c => ({ ...c, _from: num(c?.from), _to: (c?.to == null ? null : num(c?.to)) }))
-      .filter(c => Number.isFinite(c._from))
+      .map((c) => ({ ...c, _from: num(c?.from), _to: c?.to == null ? null : num(c?.to) }))
+      .filter((c) => Number.isFinite(c._from))
       .sort((a, b) => (a._from ?? 0) - (b._from ?? 0));
 
-    return list.find(c => {
-      const to = (c._to === null ? 9999 : c._to);
-      return c._from <= y && y <= to;
-    }) || null;
+    return (
+      list.find((c) => {
+        const to = c._to === null ? 9999 : c._to;
+        return c._from <= y && y <= to;
+      }) || null
+    );
   }
 
   // ====== MAP ======
   let map, streetLayer, satelliteLayer, markersLayer, routeLayer;
 
   function initMap() {
+    if (map) {
+      try { map.remove(); } catch (e) {}
+      map = null;
+    }
+
     map = L.map("map", { zoomControl: true }).setView([52.3729, 4.8936], 5);
 
     streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -98,10 +242,10 @@
       { maxZoom: 19, attribution: "Tiles &copy; Esri" }
     );
 
-    // default: satelliet
     satelliteLayer.addTo(map);
-
-    L.control.layers({ Satelliet: satelliteLayer, Straat: streetLayer }, null, { collapsed: true }).addTo(map);
+    L.control.layers({ Satelliet: satelliteLayer, Straat: streetLayer }, null, {
+      collapsed: true,
+    }).addTo(map);
 
     markersLayer = L.layerGroup().addTo(map);
     routeLayer = L.polyline([], { weight: 4, opacity: 0.9 }).addTo(map);
@@ -114,8 +258,6 @@
   }
 
   function getLatLngFromClub(c) {
-    // 1) c.latlng: [lat, lng]
-    // 2) c.lat + c.lng
     if (Array.isArray(c?.latlng) && c.latlng.length === 2) return c.latlng;
     const lat = num(c?.lat);
     const lng = num(c?.lng);
@@ -123,11 +265,17 @@
     return null;
   }
 
-  // Marker met clublogo (clubLogo in data.json)
   function clubLogoMarker(latlng, logoUrl, fallbackText = "•") {
-    const html = logoUrl
-      ? `<img src="${logoUrl}" alt="" style="width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));" />`
-      : `<div style="width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.25);font-weight:800">${fallbackText}</div>`;
+    const src = logoUrl || FALLBACK_BADGE;
+
+    const html = `
+      <img
+        src="${src}"
+        alt=""
+        style="width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));"
+        onerror="this.onerror=null;this.src='${FALLBACK_BADGE}';"
+      />
+    `;
 
     return L.marker(latlng, {
       icon: L.divIcon({
@@ -140,12 +288,11 @@
     });
   }
 
-  // ====== YEAR OVERVIEW MAP (1 club per speler in dat jaar) ======
   function renderYearOnMap(year, players) {
     clearMap();
 
     const y = Number(year);
-    const grouped = new Map(); // key => { latlng, items: [...] }
+    const grouped = new Map();
 
     for (const p of players) {
       const stint = clubAtYear(p.clubs, y);
@@ -165,7 +312,6 @@
       });
     }
 
-    // overview: geen route
     routeLayer.setLatLngs([]);
 
     const points = [];
@@ -175,7 +321,7 @@
 
       const lines = items
         .sort((a, b) => a.playerName.localeCompare(b.playerName))
-        .map(x => {
+        .map((x) => {
           const s = x.stadium ? ` • ${x.stadium}` : "";
           return `<div>• <b>${x.playerName}</b><br><span style="opacity:.85">${x.club}${s}</span></div>`;
         })
@@ -188,16 +334,13 @@
         </div>
       `;
 
-      // Neem logo van één item op die plek (zelfde club loc = prima)
-      const logo = items.find(i => i.clubLogo)?.clubLogo || null;
+      const logo = items.find((i) => i.clubLogo)?.clubLogo || null;
 
-      clubLogoMarker(latlng, logo, "•")
-        .bindPopup(popup)
-        .addTo(markersLayer);
+      clubLogoMarker(latlng, logo, "•").bindPopup(popup).addTo(markersLayer);
     }
 
     if (!points.length) {
-      els.mapSub.textContent = `Geen club-locaties gevonden voor ${y}. (Check latlng/clubLogo in data.json)`;
+      els.mapSub.textContent = `Geen club-locaties gevonden voor ${y}. (Check latlng in data.json)`;
       map.setView([52.3729, 4.8936], 5);
       return;
     }
@@ -206,7 +349,6 @@
     els.mapSub.textContent = `${y} • alle spelers • ${points.length} unieke locaties`;
   }
 
-  // ====== PLAYER DETAIL MAP (clubs t/m year + route) ======
   function renderPlayerOnMap(player) {
     clearMap();
     if (!player) return;
@@ -214,9 +356,7 @@
     const cutoff = Number(currentYear);
     const clubs = clubsUpToYear(player.clubs, cutoff);
 
-    // group markers by exact coords
     const grouped = new Map();
-
     for (const c of clubs) {
       const ll = getLatLngFromClub(c);
       if (!ll) continue;
@@ -233,7 +373,7 @@
 
       const lines = items
         .sort((a, b) => (Number(a.from) || 0) - (Number(b.from) || 0))
-        .map(c => {
+        .map((c) => {
           const period = `${c.from}–${c._toView ?? cutoff}`;
           const stadium = c.stadium ? ` • ${c.stadium}` : "";
           return `<div>• <b>${c.club}</b> (${period})${stadium}</div>`;
@@ -248,14 +388,13 @@
         </div>
       `;
 
-      const firstLogo = items.find(c => c.clubLogo)?.clubLogo || null;
+      const firstLogo = items.find((c) => c.clubLogo)?.clubLogo || null;
 
       clubLogoMarker(latlng, firstLogo, player.name?.[0] || "•")
         .bindPopup(popup)
         .addTo(markersLayer);
     }
 
-    // Route-lijn in chronologische volgorde (duplicates verwijderd op coords)
     const routePoints = [];
     const seen = new Set();
     for (const c of clubs) {
@@ -290,7 +429,6 @@
     els.metaLine.textContent = `${safe(t.name)} • ${safe(t.host)} • ${safe(t.result)} • Coach: ${safe(t.coach)}`;
     els.tournamentTitle.textContent = `${t.year} — ${t.name}`;
 
-    // Players list
     els.players.innerHTML = "";
     t.players.forEach((p, idx) => {
       const btn = document.createElement("button");
@@ -308,17 +446,14 @@
 
       btn.addEventListener("click", () => {
         selectedPlayerId = p.id;
-
         document.querySelectorAll(".player").forEach((x) => x.classList.remove("is-active"));
         btn.classList.add("is-active");
-
         renderPlayer(t.year, p.id);
       });
 
       els.players.appendChild(btn);
     });
 
-    // Reset detail
     els.playerSub.textContent = "Klik een speler";
     els.playerDetail.innerHTML = `
       <div class="empty">
@@ -330,7 +465,6 @@
       </div>
     `;
 
-    // Jaar-overview op de kaart: 1 club per speler (in dat jaar)
     renderYearOnMap(t.year, t.players);
   }
 
@@ -344,11 +478,8 @@
     els.playerSub.textContent = `${p.name} • ${safe(p.position)}`;
 
     const cutoff = Number(currentYear);
-
-    // clubs t/m dit WK-jaar (dus NIET "hele carrière tot nu", maar tot de selectie)
     const clubs = clubsUpToYear(p.clubs, cutoff);
 
-    // club-in-dat-jaar voor de tag
     const stintNow = clubAtYear(p.clubs, cutoff);
     const clubInYear = stintNow
       ? `${stintNow.club}${stintNow.country ? ` (${stintNow.country})` : ""}`
@@ -359,8 +490,8 @@
         const hasCoords = !!getLatLngFromClub(c);
         const extra = hasCoords ? "" : " • (geen coords)";
         const period = `${c.from}–${c._toView ?? cutoff}`;
-        const logo = c.clubLogo
-          ? `<img src="${c.clubLogo}" alt="" style="width:20px;height:20px;object-fit:contain;margin-right:8px;vertical-align:middle" />`
+        const logo = (c.clubLogo || FALLBACK_BADGE)
+          ? `<img src="${c.clubLogo || FALLBACK_BADGE}" alt="" style="width:20px;height:20px;object-fit:contain;margin-right:8px;vertical-align:middle" onerror="this.onerror=null;this.src='${FALLBACK_BADGE}';" />`
           : "";
 
         return `
@@ -390,13 +521,8 @@
       <ul class="clubs">
         ${clubsHtml || `<li class="club"><div class="club__name">Geen clubs in data</div></li>`}
       </ul>
-
-      <div class="muted" style="margin-top:12px;">
-        Kaart: voeg per club <b>latlng</b> toe in data.json om markers/route te zien.
-      </div>
     `;
 
-    // Update map (detail)
     renderPlayerOnMap(p);
   }
 
@@ -404,15 +530,11 @@
   function initSlider() {
     if (!years.length) return;
 
-    // Slider wordt index-based
     els.yearSlider.min = "0";
     els.yearSlider.max = String(years.length - 1);
     els.yearSlider.step = "1";
-
-    // Start op laatste jaar
     els.yearSlider.value = String(years.length - 1);
-
-    els.snapHint.textContent = ""; // niet meer nodig
+    els.snapHint.textContent = "";
 
     const onInput = () => {
       const idx = parseInt(els.yearSlider.value, 10);
@@ -428,11 +550,20 @@
   async function boot() {
     initMap();
 
+    // let op: data.json zit bij jou in /js/data.json
     const url = new URL("/js/data.json", window.location.href).toString();
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`Kon data.json niet laden (${res.status}) via ${url}`);
 
     data = await res.json();
+
+    // ✅ logo’s ophalen NA het laden van data
+    try {
+      await applyClubLogosFromTSDB(data);
+    } catch (e) {
+      console.warn("TSDB logos ophalen faalde, ga door zonder logos.", e);
+    }
+
     years = (data.tournaments || [])
       .map((t) => Number(t.year))
       .filter((y) => Number.isFinite(y))
