@@ -1,5 +1,6 @@
 import json
 import time
+import urllib.parse
 import requests
 from typing import Optional, List, Dict, Any, Tuple
 
@@ -208,14 +209,44 @@ def wd_player_details(qid: str) -> Dict[str, Any]:
         "birthCountry": birth_country_final,
     }
 
+def commons_file_url(filename: Optional[str]) -> Optional[str]:
+    if not filename:
+        return None
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(filename)
+
+def parse_wkt_point(wkt: Optional[str]) -> Tuple[Optional[float], Optional[float]]:
+    # WKT: "Point(4.891 52.373)" => lon lat
+    if not wkt:
+        return (None, None)
+    wkt = wkt.strip()
+    if not wkt.lower().startswith("point(") or not wkt.endswith(")"):
+        return (None, None)
+    inside = wkt[wkt.find("(") + 1 : -1].strip()
+    parts = inside.split()
+    if len(parts) != 2:
+        return (None, None)
+    try:
+        lng = float(parts[0])
+        lat = float(parts[1])
+        return (lat, lng)
+    except:
+        return (None, None)
+
 
 def wd_player_clubs(qid: str) -> List[Dict[str, Any]]:
     """
-    Clubs via P54 (member of sports team) + qualifiers P580 (start) & P582 (end).
-    Retourneert lijst met stints {club, from, to, country}
+    Clubs via P54 + qualifiers P580/P582.
+    Verrijkt met:
+      - stadium: club home venue (P115)
+      - coords: eerst stadion coord (P625), anders club coord (P625)
+      - clubLogo: logo image (P154), fallback image (P18) => commons url
     """
     q = f"""
-    SELECT ?clubLabel ?startYear ?endYear ?clubCountryLabel WHERE {{
+    SELECT
+      ?clubLabel ?startYear ?endYear ?clubCountryLabel
+      ?venueLabel ?venueCoord ?clubCoord
+      ?logo ?image
+    WHERE {{
       VALUES ?item {{ wd:{qid} }}
 
       ?item p:P54 ?st .
@@ -230,29 +261,42 @@ def wd_player_clubs(qid: str) -> List[Dict[str, Any]]:
         BIND(YEAR(?end) AS ?endYear)
       }}
 
+      OPTIONAL {{ ?club wdt:P17 ?clubCountry . }}
+
+      # stadion / home venue + coord
       OPTIONAL {{
-        ?club wdt:P17 ?clubCountry .
+        ?club wdt:P115 ?venue .
+        OPTIONAL {{ ?venue wdt:P625 ?venueCoord . }}
       }}
+
+      # fallback club coords
+      OPTIONAL {{ ?club wdt:P625 ?clubCoord . }}
+
+      # logo / image
+      OPTIONAL {{ ?club wdt:P154 ?logo . }}
+      OPTIONAL {{ ?club wdt:P18  ?image . }}
 
       SERVICE wikibase:label {{
         bd:serviceParam wikibase:language "en".
         ?club rdfs:label ?clubLabel .
         ?clubCountry rdfs:label ?clubCountryLabel .
+        ?venue rdfs:label ?venueLabel .
       }}
     }}
     """
+
     data = sparql(q)
     out: List[Dict[str, Any]] = []
+
     for row in data.get("results", {}).get("bindings", []):
         club = row.get("clubLabel", {}).get("value")
         start = row.get("startYear", {}).get("value")
         end = row.get("endYear", {}).get("value")
         club_country = row.get("clubCountryLabel", {}).get("value")
+        stadium = row.get("venueLabel", {}).get("value")
 
-        # start is required om te kunnen sorteren/filtreren
         if not start:
             continue
-
         try:
             start_i = int(start)
         except:
@@ -265,19 +309,32 @@ def wd_player_clubs(qid: str) -> List[Dict[str, Any]]:
             except:
                 end_i = None
 
+        # coords: eerst venueCoord, anders clubCoord
+        venue_wkt = row.get("venueCoord", {}).get("value")
+        club_wkt = row.get("clubCoord", {}).get("value")
+
+        lat, lng = parse_wkt_point(venue_wkt) if venue_wkt else (None, None)
+        if lat is None or lng is None:
+            lat, lng = parse_wkt_point(club_wkt)
+
+        latlng = [lat, lng] if (lat is not None and lng is not None) else None
+
+        # logo (bestandsnaam)
+        logo_name = row.get("logo", {}).get("value") or row.get("image", {}).get("value")
+        club_logo_url = commons_file_url(logo_name)
+
         out.append({
             "club": club,
             "from": start_i,
-            "to": end_i,  # null in JSON => current/unknown
+            "to": end_i,
             "country": club_country,
-            "stadium": None,
-            "lat": None,
-            "lng": None,
-            "latlng": None,
-            "clubLogo": None,  # jij vult dit later met TSDB cache
+            "stadium": stadium,
+            "lat": lat,
+            "lng": lng,
+            "latlng": latlng,
+            "clubLogo": club_logo_url,
         })
 
-    # sort by start year
     out.sort(key=lambda x: x.get("from", 0))
     return out
 
