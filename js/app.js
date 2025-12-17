@@ -558,11 +558,11 @@
     data = await res.json();
 
     // ✅ logo’s ophalen NA het laden van data
-    try {
-      await applyClubLogosFromTSDB(data);
-    } catch (e) {
-      console.warn("TSDB logos ophalen faalde, ga door zonder logos.", e);
-    }
+    // try {
+    //   await applyClubLogosFromTSDB(data);
+    // } catch (e) {
+    //   console.warn("TSDB logos ophalen faalde, ga door zonder logos.", e);
+    // }
 
     years = (data.tournaments || [])
       .map((t) => Number(t.year))

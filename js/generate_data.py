@@ -1,169 +1,396 @@
-import re
-import time
 import json
+import time
 import requests
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-WIKI_TEMPLATE_URL = "https://en.wikipedia.org/wiki/Template:Netherlands_squad_{year}_FIFA_World_Cup"
-WIKIDATA_API = "https://www.wikidata.org/w/api.php"
+WIKI_API = "https://en.wikipedia.org/w/api.php"
+WD_SPARQL = "https://query.wikidata.org/sparql"
 
-UA = {"User-Agent": "FreeTheMap/1.0 (local script; contact: none)"}
+HEADERS = {
+    # Wikipedia en Wikidata blokkeren vaak "lege" user agents → altijd zetten
+    "User-Agent": "FreeTheMap/1.0 (local dev; contact: you@example.com)",
+    "Accept": "application/json",
+}
 
-def wiki_get_oranje_squad_titles(year: int) -> List[str]:
+# -----------------------------
+# 1) Wikipedia template → lijst met linked titles
+# -----------------------------
+
+NOISE_TITLES = set([
+    "Netherlands national football team",
+    "FIFA World Cup",
+    "UEFA European Championship",
+    "Netherlands",
+    "Association football",
+    "Football",
+])
+
+def wiki_template_links(template_title: str) -> List[str]:
     """
-    Haalt de Wikipedia page-titles op uit de template:
-    Template:Netherlands_squad_{year}_FIFA_World_Cup
-
-    Returned: lijst met page titles (bijv. 'Johan_Cruijff')
-    """
-    url = WIKI_TEMPLATE_URL.format(year=year)
-    r = requests.get(url, headers=UA, timeout=30)
-    r.raise_for_status()
-    html = r.text
-
-    # Pak /wiki/<Title> uit de bullets op de template
-    # We filteren alles wat geen speler is (Coach, c, v/t/e, etc.)
-    titles = re.findall(r'href="/wiki/([^"#:%?]+)"', html)
-
-    bad = {
-        "Template", "Talk", "Main_Page", "Special:Search", "Help:Contents",
-        "Netherlands_squad", "Netherlands", "FIFA_World_Cup"
-    }
-
-    cleaned = []
-    for t in titles:
-        if t in bad:
-            continue
-        # Coach staat ook als link; die wil je meestal niet als speler
-        # Je kan coach apart pakken, maar voor nu filteren we niet op rol,
-        # dus we doen een simpele heuristic: skip als het duidelijk geen speler-lijst item is.
-        cleaned.append(t)
-
-    # De template bevat veel navigatie-links; we willen alleen de “squad” links.
-    # De truc: op de template pagina zitten spelers meestal in het blok rond “Netherlands squad – YEAR…”
-    # Voor nu doen we een pragmatische aanpak: dedupe + drop obvious noise en vertrouw dat het grotendeels spelers zijn.
-    # (Als je wilt, kan ik je dit 100% strak maken door HTML-sectie te isoleren.)
-    cleaned = list(dict.fromkeys(cleaned))  # dedupe, behoud volgorde
-
-    # Extra noise weghalen die vaak op templates terugkomt
-    cleaned = [t for t in cleaned if not t.startswith("Category:")]
-    cleaned = [t for t in cleaned if not t.startswith("File:")]
-    cleaned = [t for t in cleaned if not t.startswith("Wikipedia:")]
-
-    return cleaned
-
-def wikidata_qid_from_enwiki_title(title: str) -> Optional[str]:
-    """
-    Zonder SPARQL: via wbgetentities + sites=enwiki + titles=<title>
+    Haalt alle links uit een Wikipedia template (parse endpoint).
+    Let op: Wikipedia kan 403 geven zonder User-Agent.
     """
     params = {
-        "action": "wbgetentities",
-        "sites": "enwiki",
-        "titles": title,
+        "action": "parse",
+        "page": template_title,
+        "prop": "links",
         "format": "json",
-        "props": "info",
+        "redirects": 1,
     }
-    r = requests.get(WIKIDATA_API, params=params, headers=UA, timeout=30)
+    r = requests.get(WIKI_API, params=params, headers=HEADERS, timeout=30)
     r.raise_for_status()
     data = r.json()
 
-    entities = data.get("entities", {})
-    for k, v in entities.items():
-        if k.startswith("Q"):
-            return k
-    return None
+    if "error" in data:
+        return []
 
-def wikidata_entity(qid: str) -> Dict[str, Any]:
-    """
-    Haal volledige entity json op.
-    """
-    params = {
-        "action": "wbgetentities",
-        "ids": qid,
-        "format": "json",
-        "props": "claims|labels|sitelinks",
-    }
-    r = requests.get(WIKIDATA_API, params=params, headers=UA, timeout=30)
-    r.raise_for_status()
-    return r.json()["entities"][qid]
+    links = data.get("parse", {}).get("links", [])
+    titles: List[str] = []
 
-def claim_first_entity_id(entity: Dict[str, Any], prop: str) -> Optional[str]:
-    claims = entity.get("claims", {}).get(prop, [])
-    if not claims:
-        return None
-    mainsnak = claims[0].get("mainsnak", {})
-    datav = mainsnak.get("datavalue", {})
-    val = datav.get("value", {})
-    return val.get("id")
-
-def claim_first_time(entity: Dict[str, Any], prop: str) -> Optional[str]:
-    claims = entity.get("claims", {}).get(prop, [])
-    if not claims:
-        return None
-    mainsnak = claims[0].get("mainsnak", {})
-    datav = mainsnak.get("datavalue", {})
-    val = datav.get("value", {})
-    # format: "+1980-01-01T00:00:00Z"
-    t = val.get("time")
-    if not t:
-        return None
-    return t.strip("+")[:10]  # YYYY-MM-DD
-
-def entity_label(entity: Dict[str, Any], lang: str = "en") -> str:
-    return entity.get("labels", {}).get(lang, {}).get("value") or ""
-
-def generate_oranje_for_year(year: int) -> List[Dict[str, Any]]:
-    """
-    Maakt een lijst spelers voor een gegeven WK jaar.
-    Hier kan je straks je eigen data-structuur aan koppelen.
-    """
-    titles = wiki_get_oranje_squad_titles(year)
-    players = []
-
-    for title in titles:
-        qid = wikidata_qid_from_enwiki_title(title)
-        if not qid:
+    for l in links:
+        # ns=0 => main article namespace
+        if l.get("ns") != 0:
+            continue
+        title = l.get("*")
+        if not title:
+            continue
+        if title in NOISE_TITLES:
             continue
 
-        ent = wikidata_entity(qid)
+        titles.append(title)
 
-        # Basis:
-        name = entity_label(ent, "en") or title.replace("_", " ")
-        birth_place_qid = claim_first_entity_id(ent, "P19")   # place of birth
-        birth_date = claim_first_time(ent, "P569")            # date of birth
+    # unique + stable order
+    seen = set()
+    out: List[str] = []
+    for t in titles:
+        if t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
 
-        players.append({
-            "id": qid,
-            "name": name,
-            "birthDate": birth_date,
-            "birthPlaceQid": birth_place_qid,
-            "wikiTitle": title,
-            # clubs kun je hierna vullen (P54 + qualifiers) – volgende stap
+
+def build_oranje_squad_templates(from_year: int = 1990) -> List[Dict[str, Any]]:
+    world_cups = [1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022]
+    euros     = [1992, 1996, 2000, 2004, 2008, 2012, 2016, 2020, 2024]
+
+    events: List[Dict[str, Any]] = []
+
+    for y in world_cups:
+        if y < from_year:
+            continue
+        events.append({
+            "kind": "WC",
+            "year": y,
+            "template": f"Template:Netherlands squad {y} FIFA World Cup",
         })
 
-        time.sleep(0.1)  # lief zijn voor rate limits
+    for y in euros:
+        if y < from_year:
+            continue
+        events.append({
+            "kind": "EURO",
+            "year": y,
+            "template": f"Template:Netherlands squad UEFA Euro {y}",
+        })
 
-    return players
+    return events
 
-if __name__ == "__main__":
-    years = [2002, 2006, 2010, 2014, 2022]  # voeg hier alles toe wat je wil (ook 1974, 1978, 1990, 1994, 1998, etc.)
-    out = {
-        "tournaments": []
+
+# -----------------------------
+# 2) Wikipedia title → Wikidata QID (via pageprops / pageprops.wikibase_item)
+# -----------------------------
+
+def wiki_title_to_qid(title: str) -> Optional[str]:
+    params = {
+        "action": "query",
+        "format": "json",
+        "titles": title,
+        "prop": "pageprops",
+        "ppprop": "wikibase_item",
+        "redirects": 1,
+    }
+    r = requests.get(WIKI_API, params=params, headers=HEADERS, timeout=30)
+    r.raise_for_status()
+    data = r.json()
+
+    pages = data.get("query", {}).get("pages", {})
+    for _, p in pages.items():
+        props = p.get("pageprops", {})
+        qid = props.get("wikibase_item")
+        if qid:
+            return qid
+    return None
+
+
+# -----------------------------
+# 3) Wikidata SPARQL: player details + clubs with qualifiers
+# -----------------------------
+
+def sparql(query: str) -> Dict[str, Any]:
+    r = requests.get(
+        WD_SPARQL,
+        params={"format": "json", "query": query},
+        headers=HEADERS,
+        timeout=45,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def is_footballer(qid: str) -> bool:
+    """
+    Filter rommel (coach pages, captain page, etc.)
+    We check: instance of human (Q5) AND has position (P413) OR occupation footballer (Q937857)
+    """
+    q = f"""
+    SELECT ?item WHERE {{
+      VALUES ?item {{ wd:{qid} }}
+      ?item wdt:P31 wd:Q5 .
+      OPTIONAL {{ ?item wdt:P106 wd:Q937857 . }}
+      OPTIONAL {{ ?item wdt:P413 ?pos . }}
+      FILTER(BOUND(?pos) || EXISTS {{ ?item wdt:P106 wd:Q937857 }})
+    }} LIMIT 1
+    """
+    data = sparql(q)
+    bindings = data.get("results", {}).get("bindings", [])
+    return len(bindings) > 0
+
+
+def wd_player_details(qid: str) -> Dict[str, Any]:
+    """
+    Haalt: position, birthPlace label, birthCountry label, citizenship label.
+    """
+    q = f"""
+    SELECT
+      ?posLabel
+      ?birthPlaceLabel
+      ?birthCountryLabel
+      ?citizenshipLabel
+    WHERE {{
+      VALUES ?item {{ wd:{qid} }}
+
+      OPTIONAL {{ ?item wdt:P413 ?pos . }}
+      OPTIONAL {{ ?item wdt:P19 ?birthPlace . }}
+      OPTIONAL {{ ?birthPlace wdt:P17 ?birthCountry . }}
+      OPTIONAL {{ ?item wdt:P27 ?citizenship . }}
+
+      SERVICE wikibase:label {{
+        bd:serviceParam wikibase:language "en".
+        ?pos rdfs:label ?posLabel .
+        ?birthPlace rdfs:label ?birthPlaceLabel .
+        ?birthCountry rdfs:label ?birthCountryLabel .
+        ?citizenship rdfs:label ?citizenshipLabel .
+      }}
+    }}
+    """
+    data = sparql(q)
+    b = data.get("results", {}).get("bindings", [])
+
+    # Pak 1e resultaat (kan duplicates hebben)
+    pos = None
+    birth_place = None
+    birth_country = None
+    citizen = None
+
+    if b:
+        row = b[0]
+        pos = row.get("posLabel", {}).get("value")
+        birth_place = row.get("birthPlaceLabel", {}).get("value")
+        birth_country = row.get("birthCountryLabel", {}).get("value")
+        citizen = row.get("citizenshipLabel", {}).get("value")
+
+    # birthCountry heeft prioriteit, anders citizenship
+    birth_country_final = birth_country or citizen
+
+    return {
+        "position": pos,
+        "birthPlace": birth_place,
+        "birthCountry": birth_country_final,
     }
 
-    for y in years:
-        print(f"Processing Oranje squad {y}…")
-        squad = generate_oranje_for_year(y)
-        out["tournaments"].append({
-            "year": y,
-            "name": f"FIFA World Cup {y}",
-            "host": "",
-            "result": "",
-            "coach": "",
-            "players": squad
+
+def wd_player_clubs(qid: str) -> List[Dict[str, Any]]:
+    """
+    Clubs via P54 (member of sports team) + qualifiers P580 (start) & P582 (end).
+    Retourneert lijst met stints {club, from, to, country}
+    """
+    q = f"""
+    SELECT ?clubLabel ?startYear ?endYear ?clubCountryLabel WHERE {{
+      VALUES ?item {{ wd:{qid} }}
+
+      ?item p:P54 ?st .
+      ?st ps:P54 ?club .
+
+      OPTIONAL {{
+        ?st pq:P580 ?start .
+        BIND(YEAR(?start) AS ?startYear)
+      }}
+      OPTIONAL {{
+        ?st pq:P582 ?end .
+        BIND(YEAR(?end) AS ?endYear)
+      }}
+
+      OPTIONAL {{
+        ?club wdt:P17 ?clubCountry .
+      }}
+
+      SERVICE wikibase:label {{
+        bd:serviceParam wikibase:language "en".
+        ?club rdfs:label ?clubLabel .
+        ?clubCountry rdfs:label ?clubCountryLabel .
+      }}
+    }}
+    """
+    data = sparql(q)
+    out: List[Dict[str, Any]] = []
+    for row in data.get("results", {}).get("bindings", []):
+        club = row.get("clubLabel", {}).get("value")
+        start = row.get("startYear", {}).get("value")
+        end = row.get("endYear", {}).get("value")
+        club_country = row.get("clubCountryLabel", {}).get("value")
+
+        # start is required om te kunnen sorteren/filtreren
+        if not start:
+            continue
+
+        try:
+            start_i = int(start)
+        except:
+            continue
+
+        end_i: Optional[int] = None
+        if end:
+            try:
+                end_i = int(end)
+            except:
+                end_i = None
+
+        out.append({
+            "club": club,
+            "from": start_i,
+            "to": end_i,  # null in JSON => current/unknown
+            "country": club_country,
+            "stadium": None,
+            "lat": None,
+            "lng": None,
+            "latlng": None,
+            "clubLogo": None,  # jij vult dit later met TSDB cache
         })
 
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, indent=2)
+    # sort by start year
+    out.sort(key=lambda x: x.get("from", 0))
+    return out
 
-    print("✅ data.json generated with Oranje squads")
+
+# -----------------------------
+# 4) Build tournaments in jouw format
+# -----------------------------
+
+def tournament_from_key(key: str, year: int, kind: str, player_objs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    name = f"FIFA World Cup {year}" if kind == "WC" else f"UEFA Euro {year}"
+    return {
+        "year": year,
+        "name": name,
+        "host": None,
+        "result": None,
+        "coach": None,
+        "players": player_objs,
+    }
+
+
+def collect_squads(from_year: int = 1990) -> List[Tuple[str, int, str, List[str]]]:
+    """
+    Returns list of (key, year, kind, titles)
+    """
+    events = build_oranje_squad_templates(from_year)
+    out: List[Tuple[str, int, str, List[str]]] = []
+
+    for e in events:
+        key = f"{e['kind']}_{e['year']}"
+        titles = wiki_template_links(e["template"])
+        print(f"== {key} == {e['template']}")
+        print(f"  links: {len(titles)}")
+        out.append((key, e["year"], e["kind"], titles))
+
+        time.sleep(0.2)
+
+    return out
+
+
+def build_data_json(from_year: int = 1990, sleep_sparql: float = 0.25) -> Dict[str, Any]:
+    squads = collect_squads(from_year)
+    tournaments: List[Dict[str, Any]] = []
+
+    for key, year, kind, titles in squads:
+        if not titles:
+            continue
+
+        players: List[Dict[str, Any]] = []
+        seen_qids = set()
+
+        for idx, title in enumerate(titles):
+            # title → qid
+            qid = wiki_title_to_qid(title)
+            time.sleep(0.1)
+
+            if not qid:
+                continue
+            if qid in seen_qids:
+                continue
+            seen_qids.add(qid)
+
+            # filter: only actual footballer-ish people
+            try:
+                ok = is_footballer(qid)
+            except Exception:
+                ok = False
+
+            time.sleep(sleep_sparql)
+
+            if not ok:
+                continue
+
+            # details
+            try:
+                details = wd_player_details(qid)
+            except Exception:
+                details = {"position": None, "birthPlace": None, "birthCountry": None}
+
+            time.sleep(sleep_sparql)
+
+            # clubs
+            try:
+                clubs = wd_player_clubs(qid)
+            except Exception:
+                clubs = []
+
+            time.sleep(sleep_sparql)
+
+            players.append({
+                "id": f"{key}-{qid}",
+                "name": title,
+                "position": details.get("position"),
+                "birthCountry": details.get("birthCountry"),
+                # (extra, je UI negeert dit nu, maar is handig)
+                "birthPlace": details.get("birthPlace"),
+                "clubs": clubs,
+            })
+
+            print(f"  + {title} ({qid}) clubs={len(clubs)}")
+
+        print(f"  spelers gefilterd: {len(players)}")
+
+        tournaments.append(tournament_from_key(key, year, kind, players))
+
+    tournaments.sort(key=lambda t: int(t["year"]))
+    return {"tournaments": tournaments}
+
+
+if __name__ == "__main__":
+    data = build_data_json(from_year=1990)
+
+    out_path = "data.json"  # je draait script in /js, dus dit komt in js/data.json
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ data.json generated: {out_path} (tournaments={len(data.get('tournaments', []))})")
