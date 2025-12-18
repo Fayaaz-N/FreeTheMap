@@ -209,10 +209,23 @@ def wd_player_details(qid: str) -> Dict[str, Any]:
         "birthCountry": birth_country_final,
     }
 
-def commons_file_url(filename: Optional[str]) -> Optional[str]:
-    if not filename:
+def commons_file_url(value: Optional[str]) -> Optional[str]:
+    if not value:
         return None
-    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(filename)
+
+    v = value.strip()
+
+    # Als Wikidata al een URL geeft: niet nog een keer wrappen
+    if v.startswith("http://") or v.startswith("https://"):
+        return v
+
+    # Soms zit Special:FilePath al in de string
+    if "commons.wikimedia.org/wiki/Special:FilePath/" in v:
+        return v
+
+    # Anders: behandel als bestandsnaam
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(v)
+
 
 def parse_wkt_point(wkt: Optional[str]) -> Tuple[Optional[float], Optional[float]]:
     # WKT: "Point(4.891 52.373)" => lon lat
